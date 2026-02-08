@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $hidden = ['tenant_id'];
-    protected $guarded = ['tenant_id','id'];
+    protected $guarded = ['id'];
 }

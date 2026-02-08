@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Budget extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $guarded = ['tenant_id','id'];
     protected $hidden = ['tenant_id'];
 

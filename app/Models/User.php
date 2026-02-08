@@ -11,7 +11,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, \Spatie\Permission\Traits\HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    protected $guard_name = 'api';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -40,6 +41,15 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Tenant::class)
             ->withPivot('role_id', 'joined_at');
+    }
+
+    public function setCurrentTenant(int $tenantId): void
+    {
+        $this->current_tenant_id = $tenantId;
+    }
+    public function getCurrentTenant(): int
+    {
+        return $this->current_tenant_id;
     }
 
     /**

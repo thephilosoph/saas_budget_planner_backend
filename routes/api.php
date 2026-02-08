@@ -30,4 +30,6 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/{id}', [\App\Http\Controllers\Core\BudgetController::class, 'update']);
         Route::delete('/{id}', [\App\Http\Controllers\Core\BudgetController::class, 'delete']);
     });
+
+    Route::apiResource('transactions', \App\Http\Controllers\Finance\TransactionController::class);
 });

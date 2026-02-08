@@ -49,6 +49,10 @@ class AuthService implements AuthServiceInterface
                 $user,
                 $data['device_name']
             );
+            
+            // Assign default role
+            $user->assignRole('Tenant Owner');
+            
             return [
                 'user'  => $user,
                 'token' => $token,

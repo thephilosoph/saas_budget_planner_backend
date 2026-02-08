@@ -10,4 +10,6 @@ interface AuthServiceInterface
     public function login(array $credentials, string $deviceName): array;
 
     public function logout(User $user): void;
+
+
 }
