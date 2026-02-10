@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade'); // Links to owner/creator
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->string('stripe_customer_id')->nullable();
             $table->string('pm_type')->nullable();
             $table->string('pm_last_four', 4)->nullable();

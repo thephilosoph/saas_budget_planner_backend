@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Contracts\Repositories\Authentication\TenantInvitationRepositoryInterface;
+use App\Contracts\Repositories\Authentication\UserRepositoryInterface;
 use App\Contracts\Services\Auth\TenantInvitationServiceInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -10,7 +11,8 @@ use Illuminate\Support\Str;
 class TenantInvitationService implements TenantInvitationServiceInterface
 {
     public function __construct(
-        private TenantInvitationRepositoryInterface $repository
+        private TenantInvitationRepositoryInterface $repository,
+        protected UserRepositoryInterface $users,
     ) {}
 
     public function inviteUser(array $data)
@@ -32,11 +34,11 @@ class TenantInvitationService implements TenantInvitationServiceInterface
         });
     }
 
-    public function accept(string $token)
+    public function accept(string $token, array $data)
     {
-        return DB::transaction(function () use ($token) {
+        return DB::transaction(function () use ($token, $data) {
             $invite = $this->repository->findByToken($token);
-            $user = auth()->user();
+            $user = $this->users->createUser($data);
 
             DB::table('tenant_user')->updateOrInsert([
                 'tenant_id' => $invite->tenant_id,

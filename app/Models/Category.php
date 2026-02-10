@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
-    protected $guarded = ["id",'tenant_id'];
+    protected $guarded = ["id"];
     protected $hidden = ['tenant_id'];
 
     public function budgets()

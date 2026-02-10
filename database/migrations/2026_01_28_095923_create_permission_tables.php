@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('name'); // 'super_admin', 'platform_admin', 'platform_employee', 'tenant_owner', 'tenant_admin', 'tenant_accountant', 'tenant_viewer'
             $table->string('guard_name')->default('web');
             $table->string('type')->default('tenant'); // 'platform' or 'tenant' to categorize
-            $table->boolean('is_editable')->default(true); // From your tenant_roles
+            $table->boolean('is_editable')->default(false); // From your tenant_roles
             $table->integer('level')->default(0); // From your tenant_roles (e.g., 0=owner, 1=admin)
             $table->timestamps();
 

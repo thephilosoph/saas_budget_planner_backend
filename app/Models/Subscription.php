@@ -6,8 +6,8 @@ use Laravel\Cashier\Subscription as CashierSubscription;
 
 class Subscription extends CashierSubscription
 {
-    protected $guarded = ['id','tenant_id',
-        'stripe_subscription_id','stripe_status',
+    protected $guarded = ['id',
+        'stripe_subscription_id',
         'trial_ends_at','current_period_start','current_period_end','canceled_at'];
     protected $casts = [
         'stripe_status' => \App\Enums\StripeStatus::class,

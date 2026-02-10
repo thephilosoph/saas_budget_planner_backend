@@ -10,6 +10,7 @@ use App\Contracts\Repositories\Billing\PlanRepositoryInterface;
 use App\Contracts\Repositories\Billing\SubscriptionRepositoryInterface;
 use App\Contracts\Repositories\Usage\UsageRepositoryInterface;
 use App\Contracts\Services\Auth\AuthServiceInterface;
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,10 +34,11 @@ class AuthService implements AuthServiceInterface
         return DB::transaction(function () use ($data) {
             $user = $this->users->createUser($data);
             $tenant = $this->tenants->createTenant($data['company_name'],$user->id);
+
             $user->current_tenant_id = $tenant->id;
+            $user->save();
 
             $plan = $this->plans->getDefaultPlan();
-
             $this->subscriptions->createTrial(
                 $tenant,
                 $plan
@@ -45,14 +47,14 @@ class AuthService implements AuthServiceInterface
             $this->usage->initializeForTenant($tenant);
             $this->users->setCurrentTenant($user, $tenant->id);
 
+            // Assign default role
+            $user->assignRole(Role::OWNER);
+
             $token = $this->authRepository->createToken(
                 $user,
                 $data['device_name']
             );
-            
-            // Assign default role
-            $user->assignRole('Tenant Owner');
-            
+
             return [
                 'user'  => $user,
                 'token' => $token,

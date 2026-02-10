@@ -4,8 +4,11 @@ namespace App\Providers;
 
 use App\Contracts\Repositories\Core\CategoryRepositoryInterface;
 use App\Contracts\Services\Core\CategoryServiceInterface;
+use App\Models\Category;
+use App\Policies\CategoryPolicy;
 use App\Repositories\Core\CategoryRepository;
 use App\Services\Core\CategoryService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class CoreProvider extends ServiceProvider
@@ -24,6 +27,7 @@ class CoreProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(Category::class, CategoryPolicy::class);
+
     }
 }

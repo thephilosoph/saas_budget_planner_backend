@@ -11,6 +11,14 @@ class Role extends SpatieRole
     {
         return $this->name === 'owner';
     }
+
+
+//    public function scopeRole($query, $role, $guard = null)
+//    {
+//        return $query
+//            ->where('name', $role)
+//            ->where('guard_name', $guard ?? config('auth.defaults.guard'));
+//    }
 }
 
 

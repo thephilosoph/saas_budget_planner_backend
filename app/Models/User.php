@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Authentication\MustVerifyEmail;
+use App\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, \Spatie\Permission\Traits\HasRoles;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -43,15 +44,22 @@ class User extends Authenticatable
             ->withPivot('role_id', 'joined_at');
     }
 
-    public function setCurrentTenant(int $tenantId): void
-    {
-        $this->current_tenant_id = $tenantId;
-    }
     public function getCurrentTenant(): int
     {
         return $this->current_tenant_id;
     }
 
+    public function setCurrentTenant($tenantId): void
+    {
+        $this->current_tenant_id = $tenantId;
+        $this->save();
+    }
+
+    // Override the tenant getter if needed
+    protected function getTenantIdForRole(): ?int
+    {
+        return $this->current_tenant_id;
+    }
     /**
      * Get the attributes that should be cast.
      *

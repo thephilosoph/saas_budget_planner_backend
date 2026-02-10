@@ -8,16 +8,21 @@ use App\Http\Requests\Core\CreateCategoryRequest;
 use App\Http\Requests\Core\IndexCategoryRequest;
 use App\Http\Requests\Core\UpdateCategoryRequest;
 use App\Http\Resources\Core\CategoryResource;
+use App\Models\Category;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
+    use AuthorizesRequests;
     public function __construct(protected CategoryServiceInterface $categoryService)
     {
     }
 
     public function index(IndexCategoryRequest $request)
     {
+
 //        $result = $this->categoryService->list($request->validated());
         $result = $this->categoryService->list([
             'filters'   => $request->filters(),
@@ -32,11 +37,13 @@ class CategoryController extends Controller
     public function show(int $id)
     {
         $result = $this->categoryService->findOrFail($id);
+        Gate::authorize('view', auth()->user(),$result);
         return new CategoryResource($result);
     }
 
     public function create(CreateCategoryRequest $request)
     {
+        $this->authorize('create', Category::class);
         $result = $this->categoryService->create($request->validated());
         return new CategoryResource($result);
     }

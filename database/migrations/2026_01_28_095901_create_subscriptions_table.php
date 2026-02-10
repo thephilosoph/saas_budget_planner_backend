@@ -20,8 +20,8 @@ return new class extends Migration
                 array_map(fn(StripeStatus $case)=>$case->value,StripeStatus::cases()))
                 ->default(StripeStatus::INCOMPLETE);
             $table->timestamp('trial_ends_at')->nullable();
-            $table->timestamp('current_period_start');
-            $table->timestamp('current_period_end');
+            $table->timestamp('current_period_start')->nullable();
+            $table->timestamp('current_period_end')->nullable();
             $table->timestamp('canceled_at')->nullable();
             $table->timestamps();
 

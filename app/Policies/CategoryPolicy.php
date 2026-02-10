@@ -8,6 +8,7 @@ use App\Models\User;
 class CategoryPolicy extends BasePolicy
 {
 
+
     public function view(User $user, Category $category): bool
     {
         return $this->belongsToTenant($user, $category)
