@@ -36,6 +36,7 @@ class CategoryController extends Controller
 
     public function show(int $id)
     {
+        $this->authorize('view', Category::class);
         $result = $this->categoryService->findOrFail($id);
         Gate::authorize('view', auth()->user(),$result);
         return new CategoryResource($result);
@@ -50,11 +51,13 @@ class CategoryController extends Controller
 
     public function update(int $id,UpdateCategoryRequest $request)
     {
+        $this->authorize('update', Category::class);
         $result = $this->categoryService->update($id, $request->validated());
         return new CategoryResource($result);
     }
 
     public function delete(int $id){
+        $this->authorize('delete', Category::class);
         $deleted = $this->categoryService->delete($id);
         if($deleted){
             return response()->json(["message"=>"Category deleted successfully"]);

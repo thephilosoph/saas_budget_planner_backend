@@ -18,15 +18,13 @@ class TransactionService extends BaseService implements TransactionServiceInterf
     public function create(array $data)
     {
         // Automatically assign tenant_id and created_by if not provided
-        if (!isset($data['tenant_id']) && Auth::check()) {
+        if (Auth::check()) {
             $data['tenant_id'] = Auth::user()->current_tenant_id;
-        }
-        if (!isset($data['created_by']) && Auth::check()) {
             $data['created_by'] = Auth::id();
         }
 
         return parent::create($data);
     }
-    
+
     // list, update, delete, findOrFail are handled by BaseService
 }
