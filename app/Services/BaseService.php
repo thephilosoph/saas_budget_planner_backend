@@ -15,6 +15,7 @@ abstract class BaseService implements BaseServiceInterface
 
         return $this->repository->get(
             filters: $filters,
+            relations: $filters['relations'] ?? [],
             perPage: $filters['perPage'] ?? 15,
             scope: fn ($q) =>
             $q->where('tenant_id', auth()->user()->current_tenant_id)
@@ -23,6 +24,9 @@ abstract class BaseService implements BaseServiceInterface
 
     public function create(array $data)
     {
+        if (!isset($data['tenant_id']) && auth()->check()) {
+            $data['tenant_id'] = auth()->user()->current_tenant_id;
+        }
         return DB::transaction(fn () => $this->repository->create($data));
     }
 

@@ -17,6 +17,8 @@ class BudgetRepository extends BaseRepository implements BudgetRepositoryInterfa
     protected array $filterable = [
         'total_income',
         'total_expense',
+        'year',
+        'month',
     ];
 
     protected array $searchable = [

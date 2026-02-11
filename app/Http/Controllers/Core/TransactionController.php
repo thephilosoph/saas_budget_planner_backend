@@ -2,57 +2,62 @@
 
 namespace App\Http\Controllers\Core;
 
+use App\Contracts\Services\Finance\TransactionServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Core\IndexTransactionRequest;
+use App\Http\Requests\Finance\CreateTransactionRequest;
+use App\Http\Requests\Finance\UpdateTransactionRequest;
+use App\Http\Resources\Finance\TransactionResource;
+use App\Models\Transaction;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(protected CategoryServiceInterface $categoryService)
+    public function __construct(protected TransactionServiceInterface $transactionService)
     {
     }
 
-    public function index(IndexCategoryRequest $request)
+    public function index(IndexTransactionRequest $request)
     {
 
-//        $result = $this->categoryService->list($request->validated());
-        $result = $this->categoryService->list([
-            'filters'   => $request->filters(),
-            'relations' => $request->relations(),
-            'sort'      => $request->sort(),
-            'direction' => $request->direction(),
-            'perPage'   => $request->perPage(),
-        ]);
-        return CategoryResource::collection($result);
+        $transactions = $this->transactionService->list([
+            "filters" => $request->filters(),
+            "sort" => $request->sort(),
+            "direction" => $request->direction(),
+            "perPage" => $request->perPage(),
+            "relations" => $request->relations()
+            ]
+        );
+
+        return TransactionResource::collection($transactions);
     }
 
     public function show(int $id)
     {
-        $this->authorize('view', Category::class);
-        $result = $this->categoryService->findOrFail($id);
-        Gate::authorize('view', auth()->user(),$result);
-        return new CategoryResource($result);
+        $this->authorize('view', Transaction::class);
+        $result = $this->transactionService->findOrFail($id);
+        return new TransactionResource($result);
     }
 
-    public function create(CreateCategoryRequest $request)
+    public function create(CreateTransactionRequest $request)
     {
-        $this->authorize('create', Category::class);
-        $result = $this->categoryService->create($request->validated());
-        return new CategoryResource($result);
+        $this->authorize('create', Transaction::class);
+        $result = $this->transactionService->create($request->validated());
+        return new TransactionResource($result);
     }
 
-    public function update(int $id,UpdateCategoryRequest $request)
+    public function update(int $id,UpdateTransactionRequest $request)
     {
-        $this->authorize('update', Category::class);
-        $result = $this->categoryService->update($id, $request->validated());
-        return new CategoryResource($result);
+        $this->authorize('update', Transaction::class);
+        $result = $this->transactionService->update($id, $request->validated());
+        return new TransactionResource($result);
     }
 
     public function delete(int $id){
-        $this->authorize('delete', Category::class);
-        $deleted = $this->categoryService->delete($id);
+        $this->authorize('delete', Transaction::class);
+        $deleted = $this->transactionService->delete($id);
         if($deleted){
             return response()->json(["message"=>"Category deleted successfully"]);
         }

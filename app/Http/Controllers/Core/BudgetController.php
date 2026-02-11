@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Core;
 use App\Contracts\Services\Core\BudgetServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Core\CreateBudgetRequest;
+use App\Http\Requests\Core\IndexBudgetRequest;
 use App\Http\Requests\Core\UpdateBudgetRequest;
 use App\Http\Resources\Core\BudgetResource;
 use App\Models\Budget;
@@ -19,18 +20,19 @@ class BudgetController extends Controller
     {
     }
 
-//    public function index(IndexCategoryRequest $request)
-//    {
-////        $result = $this->categoryService->list($request->validated());
-//        $result = $this->categoryService->list([
-//            'filters'   => $request->filters(),
-//            'relations' => $request->relations(),
-//            'sort'      => $request->sort(),
-//            'direction' => $request->direction(),
-//            'perPage'   => $request->perPage(),
-//        ]);
-//        return CategoryResource::collection($result);
-//    }
+    public function index(IndexBudgetRequest $request)
+    {
+        $filters = [
+            'filters'   => $request->filters(),
+            'relations' => $request->relations(),
+            'sort'      => $request->sort(),
+            'direction' => $request->direction(),
+            'perPage'   => $request->perPage(),
+        ];
+
+        $result = $this->budgetService->list($filters);
+        return BudgetResource::collection($result);
+    }
 
     public function show(int $id)
     {

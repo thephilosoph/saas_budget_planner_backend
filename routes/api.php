@@ -13,7 +13,8 @@ Route::prefix('auth')->group(function () {
 //    Route::post('reset-password', [PasswordController::class, 'reset']);
 });
 
-
+Route::get("invite/{token}", [\App\Http\Controllers\Auth\TenantInvitationController::class, 'show']);
+Route::post('invite/{invitation}', [\App\Http\Controllers\Auth\TenantInvitationController::class, 'accept']);
 
 Route::middleware('auth:api')->group(function () {
     Route::prefix('category')->group(function () {
@@ -32,4 +33,9 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::apiResource('transactions', \App\Http\Controllers\Finance\TransactionController::class);
+
+    Route::prefix("invite")->group(function () {
+        Route::post("/", [\App\Http\Controllers\Auth\TenantInvitationController::class, 'create']);
+        Route::delete("/", [\App\Http\Controllers\Auth\TenantInvitationController::class, 'delete']);
+    });
 });

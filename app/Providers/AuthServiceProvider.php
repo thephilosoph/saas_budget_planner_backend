@@ -3,15 +3,19 @@
 namespace App\Providers;
 
 use App\Contracts\Repositories\Authentication\AuthRepositoryInterface;
+use App\Contracts\Repositories\Authentication\TenantInvitationRepositoryInterface;
 use App\Contracts\Repositories\Authentication\UserRepositoryInterface;
 use App\Contracts\Repositories\Authorization\RoleRepositoryInterface;
 use App\Contracts\Repositories\Usage\UsageRepositoryInterface;
 use App\Contracts\Services\Auth\AuthServiceInterface;
+use App\Contracts\Services\Auth\TenantInvitationServiceInterface;
 use App\Repositories\Auth\AuthRepository;
+use App\Repositories\Auth\TenantInvitationRepository;
 use App\Repositories\Auth\UserRepository;
 use App\Repositories\Authorization\RoleRepository;
 use App\Repositories\Usage\UsageRepository;
 use App\Services\Auth\AuthService;
+use App\Services\Auth\TenantInvitationService;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -34,6 +38,9 @@ class AuthServiceProvider extends ServiceProvider
             AuthService::class
         );
         $this->app->bind(UsageRepositoryInterface::class,UsageRepository::class);
+
+        $this->app->bind(TenantInvitationRepositoryInterface::class,TenantInvitationRepository::class);
+        $this->app->bind(TenantInvitationServiceInterface::class,TenantInvitationService::class);
     }
 
     /**

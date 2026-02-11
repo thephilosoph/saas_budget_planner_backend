@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Finance;
 
 use App\Contracts\Services\Finance\TransactionServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Finance\IndexTransactionRequest;
 use App\Http\Requests\Finance\StoreTransactionRequest;
 use App\Http\Requests\Finance\UpdateTransactionRequest;
 use App\Http\Resources\Finance\TransactionResource;
@@ -15,20 +16,20 @@ class TransactionController extends Controller
         protected TransactionServiceInterface $transactionService
     ) {}
 
-    public function index(Request $request)
+    public function index(IndexTransactionRequest $request)
     {
         $filters = [
-            'filters' => $request->only(['type', 'category_id', 'budget_id']),
+            'filters' => $request->filters(),
             'search'  => $request->input('search'),
-            'sort'    => $request->input('sort'),
-            'direction' => $request->input('direction'),
+            'sort'    => $request->sort(),
+            'direction' => $request->direction(),
             'start_date' => $request->input('start_date'),
             'end_date'   => $request->input('end_date'),
         ];
 
         $result = $this->transactionService->list(
             $filters,
-            $request->input('per_page', 15)
+            $request->perPage()
         );
         return TransactionResource::collection($result);
     }

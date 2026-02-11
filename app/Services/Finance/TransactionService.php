@@ -17,9 +17,8 @@ class TransactionService extends BaseService implements TransactionServiceInterf
 
     public function create(array $data)
     {
-        // Automatically assign tenant_id and created_by if not provided
+        // Automatically assign created_by if not provided
         if (Auth::check()) {
-            $data['tenant_id'] = Auth::user()->current_tenant_id;
             $data['created_by'] = Auth::id();
         }
 

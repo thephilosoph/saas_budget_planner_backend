@@ -6,7 +6,7 @@ use App\Enums\TransactionType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreTransactionRequest extends FormRequest
+class CreateTransactionRequest extends FormRequest
 {
     public function authorize(): bool
     {

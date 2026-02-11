@@ -13,21 +13,25 @@ class CategoryResource extends BaseResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    protected function attributes($request): array
     {
-//        return parent::toArray($request);
-        return $this->successResponse(parent::toArray($request));
-//        return $this->successResponse([
-//            "category" => [
-//                "id" => $this['category']->id,
-//                "name" => $this['category']->name,
-//                "parent_id" => $this['category']->parent_id,
-//                "type" => $this['category']->type,
-//                "color" => $this['category']->color,
-//                "icon" => $this['category']->icon,
-//                "is_system" => $this['category']->is_system,
-//                "sort_order" => $this['category']->sort_order,
-//            ]
-//        ]);
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "parent_id" => $this->parent_id,
+            "type" => $this->type,
+            "color" => $this->color,
+            "icon" => $this->icon,
+            "is_system" => $this->is_system,
+            "sort_order" => $this->sort_order,
+        ];
+    }
+
+    protected function includeRelations($request): array
+    {
+        return [
+            'parent' => new CategoryResource($this->whenLoaded('parent')),
+            // 'children' => CategoryResource::collection($this->whenLoaded('children')),
+        ];
     }
 }

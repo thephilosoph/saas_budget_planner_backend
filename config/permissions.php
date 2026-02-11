@@ -11,6 +11,7 @@ return [
 
     'tenant' => [
         'budgets' => ['create', 'update', 'delete', 'view'],
+        'invitation' => ['create', 'delete', 'view'],
         'transactions' => ['create', 'update', 'delete', 'view'],
         'categories' => ['create', 'update', 'delete', 'view'],
         'reports' => ['export', 'view'],

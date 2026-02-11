@@ -3,16 +3,15 @@
 namespace App\Http\Resources\Finance;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\BaseResource;
+use App\Http\Resources\Core\CategoryResource;
+use App\Http\Resources\Core\BudgetResource;
 
-class TransactionResource extends JsonResource
+class TransactionResource extends BaseResource
 {
-    public function toArray(Request $request): array
+    protected function attributes($request): array
     {
         return [
-            'id'               => $this->id,
-            'category'         => $this->whenLoaded('category'), // Assuming relationships defined in model
-            'budget'           => $this->whenLoaded('budget'),
             'description'      => $this->description,
             'amount'           => $this->amount,
             'currency'         => $this->currency,
@@ -21,8 +20,14 @@ class TransactionResource extends JsonResource
             'payment_method'   => $this->payment_method,
             'notes'            => $this->notes,
             'metadata'         => $this->metadata,
-            'created_at'       => $this->created_at,
-            'updated_at'       => $this->updated_at,
+        ];
+    }
+
+    protected function includeRelations($request): array
+    {
+        return [
+            'category' => new CategoryResource($this->whenLoaded('category')),
+            'budget'   => new BudgetResource($this->whenLoaded('budget')),
         ];
     }
 }
