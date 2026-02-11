@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Laravel\Cashier\Subscription as CashierSubscription;
 
 class Subscription extends CashierSubscription
 {
+    use Auditable;
+
     protected $guarded = ['id',
         'stripe_subscription_id',
         'trial_ends_at','current_period_start','current_period_end','canceled_at'];
@@ -19,5 +22,10 @@ class Subscription extends CashierSubscription
     public function isActive(): bool
     {
         return $this->valid();
+    }
+
+    public function shouldAudit(string $action): bool
+    {
+        return in_array($action, ['created', 'updated', 'deleted']);
     }
 }

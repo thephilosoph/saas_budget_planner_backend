@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class Tenant extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
-//    protected $fillable = ['name', 'slug', 'created_by'];
-//    protected $casts = ['trial_ends_at' => 'datetime'];
+    use Auditable;
+
     protected $guarded = ['id','created_by','stripe_customer_id','pm_type','pm_last_four'];
     protected $hidden = ['stripe_customer_id','pm_type','pm_last_four'];
 
@@ -16,5 +17,10 @@ class Tenant extends Model
         return $this->belongsToMany(User::class, 'tenant_user')
             ->withPivot('role', 'joined_at')
             ->withTimestamps();
+    }
+
+    public function shouldAudit(string $action): bool
+    {
+        return in_array($action, ['created', 'updated', 'deleted']);
     }
 }

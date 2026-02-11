@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Authentication\MustVerifyEmail;
+use App\Traits\Auditable;
 use App\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +14,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
+    use Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -72,5 +74,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function shouldAudit(string $action): bool
+    {
+        return in_array($action, ['created', 'updated', 'deleted']);
     }
 }
