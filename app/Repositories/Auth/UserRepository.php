@@ -30,6 +30,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email): ?User
     {
-        // TODO: Implement findByEmail() method.
+        return User::where('email', $email)->first();
     }
 }

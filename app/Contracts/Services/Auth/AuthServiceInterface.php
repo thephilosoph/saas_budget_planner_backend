@@ -11,5 +11,13 @@ interface AuthServiceInterface
 
     public function logout(User $user): void;
 
+    public function refreshToken(string $refreshToken): array;
+
+    public function forgotPassword(string $email): bool;
+
+    public function resetPassword(array $data): bool;
+
+    public function changePassword(User $user, string $currentPassword, string $newPassword): bool;
+
 
 }

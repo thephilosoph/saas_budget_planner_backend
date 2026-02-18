@@ -4,16 +4,25 @@ namespace App\Enums;
 
 enum UsageTrackingMetric: string
 {
-case TRANSACTION_COUNT = "transaction_count";
-case STORAGE_MB = "storage_mb";
-case CSV_IMPORT = "csv_import";
+    case TRANSACTIONS_COUNT = 'transactions';
+    case STORAGE_MB = 'storage_mb';
+    case CSV_IMPORTS = 'csv_imports';
+    case EXPORTS_COUNT = 'exports';
+    case SEATS_USED = 'seats';
 
+
+    public function limitKey(): string
+    {
+        return $this->value;
+    }
 function label(): string
 {
     return match ($this) {
-        self::TRANSACTION_COUNT => "Transaction Count",
+        self::TRANSACTIONS_COUNT => "Transaction Count",
         self::STORAGE_MB => "Storage MB",
-        self::CSV_IMPORT => "CSV Import",
+        self::CSV_IMPORTS => "CSV Import",
+        self::EXPORTS_COUNT => "Exports Count",
+        self::SEATS_USED => "Seats Used",
     };
 }
 }

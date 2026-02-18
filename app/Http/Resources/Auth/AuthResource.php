@@ -11,15 +11,18 @@ class AuthResource extends JsonResource
     {
         return [
             'user' => [
-                'id'    => $this['user']->id,
-                'name'  => $this['user']->name,
+                'id' => $this['user']->id,
+                'name' => $this['user']->name,
                 'email' => $this['user']->email,
                 'current_tenant_id' => $this['user']->current_tenant_id,
             ],
-            'token' => [
-                'access_token' => $this['token']['access_token'],
-                'expires_at'   => $this['token']['expires_at'],
-                'token_type'   => 'Bearer',
+
+            'auth' => [
+                'token_type' => $this['tokens']['token_type'],
+                'access_token' => $this['tokens']['access_token'],
+                'refresh_token' => $this['tokens']['refresh_token'],
+                'expires_in' => $this['tokens']['expires_in'],
+                'expires_at' => now()->addSeconds($this['tokens']['expires_in'])->toISOString(),
             ],
         ];
     }

@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Contracts\Repositories\Authentication\AuthRepositoryInterface;
+use App\Contracts\Repositories\Authentication\PasswordResetRepositoryInterface;
 use App\Contracts\Repositories\Authentication\TenantRepositoryInterface;
 use App\Contracts\Repositories\Authentication\UserRepositoryInterface;
 use App\Contracts\Repositories\Authorization\RoleRepositoryInterface;
@@ -14,6 +15,7 @@ use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthService implements AuthServiceInterface
@@ -27,6 +29,7 @@ class AuthService implements AuthServiceInterface
         protected SubscriptionRepositoryInterface $subscriptions,
         protected UsageRepositoryInterface $usage,
         protected PlanRepositoryInterface $plans,
+        protected PasswordResetRepositoryInterface $passwordResets,
     ) {}
 
     public function register(array $data): array
@@ -64,27 +67,129 @@ class AuthService implements AuthServiceInterface
 
     public function login(array $credentials, string $deviceName): array
     {
+//        $user = Auth::guard('web')->user();
+//        if (! $user->is_active) {
+//            throw ValidationException::withMessages([
+//                'email' => 'Account is disabled.',
+//            ]);
+//       }
+        $user = $this->users->findByEmail($credentials['email']);
 
-        if (!Auth::guard('web')->attempt($credentials)) {
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => ['Invalid credentials'],
             ]);
         }
-        $user = Auth::guard('web')->user();
-        if (! $user->is_active) {
+
+        $tokens = $this->authRepository->login($credentials['email'], $credentials['password']);
+
+        if (!$tokens) {
             throw ValidationException::withMessages([
-                'email' => 'Account is disabled.',
+                'email' => ['Invalid credentials']
             ]);
         }
-        $token = $this->authRepository->createToken($user, $deviceName);
+
         return [
-            'user'  => $user,
-            'token' => $token,
+            'user' => $user,
+            'tokens' => $tokens,
         ];
     }
 
     public function logout(User $user): void
     {
-        $this->authRepository->revokeCurrentToken($user);
+        $accessToken = $user->token();
+        $this->authRepository->logout($accessToken);
+    }
+
+    public function refreshToken(string $refreshToken): array
+    {
+        $tokens = $this->authRepository->refreshToken($refreshToken);
+
+        if (!$tokens) {
+            throw ValidationException::withMessages([
+                'refresh_token' => ['Invalid or expired refresh token']
+            ]);
+        }
+
+        return $this->formatTokenResponse($tokens);
+    }
+
+    private function formatTokenResponse(array $tokens): array
+    {
+        return [
+            'token_type' => $tokens['token_type'],
+            'expires_in' => $tokens['expires_in'],
+            'access_token' => $tokens['access_token'],
+            'refresh_token' => $tokens['refresh_token'],
+        ];
+    }
+
+    public function forgotPassword(string $email): bool
+    {
+        $user = $this->authRepository->findByEmail($email);
+
+        if (!$user) {
+            return true;
+        }
+
+        $token = $this->passwordResets->createToken($user);
+
+        // TODO: Dispatch event to send email
+        // event(new PasswordResetRequested($user, $token));
+
+        return true;
+    }
+
+    public function resetPassword(array $data): bool
+    {
+        $record = $this->passwordResets->findValidToken(
+            $data['email'],
+            $data['token']
+        );
+
+        if (!$record) {
+            throw ValidationException::withMessages([
+                'token' => 'Invalid or expired password reset token.',
+            ]);
+        }
+
+        $user = $this->authRepository->findByEmail($data['email']);
+
+        if (!$user) {
+            return false;
+        }
+
+        DB::transaction(function () use ($user, $data) {
+            $user->update([
+                'password' => bcrypt($data['password']),
+            ]);
+
+            $this->passwordResets->deleteToken($data['email']);
+
+            // Revoke all existing tokens for security
+            $this->authRepository->revokeAllTokens($user);
+
+            // TODO event for password reset
+//            event(new PasswordReset($user));
+        });
+
+        return true;
+    }
+
+    public function changePassword(User $user, string $currentPassword, string $newPassword): bool
+    {
+        if (!Hash::check($currentPassword, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'Current password is incorrect.',
+            ]);
+        }
+
+        $user->update([
+            'password' => bcrypt($newPassword),
+        ]);
+
+//         $this->authRepository->revokeAllTokens($user);
+
+        return true;
     }
 }

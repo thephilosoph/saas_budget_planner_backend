@@ -28,4 +28,9 @@ class Subscription extends CashierSubscription
     {
         return in_array($action, ['created', 'updated', 'deleted']);
     }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
 }

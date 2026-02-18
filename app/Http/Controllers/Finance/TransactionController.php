@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Finance;
 
 use App\Contracts\Services\Finance\TransactionServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Finance\CreateTransactionRequest;
 use App\Http\Requests\Finance\IndexTransactionRequest;
 use App\Http\Requests\Finance\StoreTransactionRequest;
 use App\Http\Requests\Finance\UpdateTransactionRequest;
@@ -40,7 +41,7 @@ class TransactionController extends Controller
         return new TransactionResource($result);
     }
 
-    public function store(StoreTransactionRequest $request)
+    public function store(CreateTransactionRequest $request)
     {
         $result = $this->transactionService->create($request->validated());
         return new TransactionResource($result);

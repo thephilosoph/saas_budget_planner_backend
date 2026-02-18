@@ -23,4 +23,9 @@ class Tenant extends Model
     {
         return in_array($action, ['created', 'updated', 'deleted']);
     }
+
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
 }

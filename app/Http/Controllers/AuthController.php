@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\AuthResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -16,6 +17,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request){
         $result = $this->authService->login($request->only(['email', 'password']),$request->device_name);
+
         return new AuthResource($result);
     }
 

@@ -2,13 +2,11 @@
 
 namespace App\Contracts\Repositories\Authentication;
 
-use App\Models\User;
-
 interface AuthRepositoryInterface
 {
-    public function findByEmail(string $email): ?User;
+    public function login(string $email, string $password): ?array;
 
-    public function createToken(User $user, string $deviceName): array;
+    public function refreshToken(string $refreshToken): ?array;
 
-    public function revokeCurrentToken(User $user): void;
+    public function logout(string $accessToken): void;
 }

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Contracts\Repositories\Authentication\AuthRepositoryInterface;
+use App\Contracts\Repositories\Authentication\AuthRepositoryPersonalAccessInterface;
+use App\Contracts\Repositories\Authentication\PasswordResetRepositoryInterface;
 use App\Contracts\Repositories\Authentication\TenantInvitationRepositoryInterface;
 use App\Contracts\Repositories\Authentication\UserRepositoryInterface;
 use App\Contracts\Repositories\Authorization\RoleRepositoryInterface;
@@ -10,6 +12,8 @@ use App\Contracts\Repositories\Usage\UsageRepositoryInterface;
 use App\Contracts\Services\Auth\AuthServiceInterface;
 use App\Contracts\Services\Auth\TenantInvitationServiceInterface;
 use App\Repositories\Auth\AuthRepository;
+use App\Repositories\Auth\AuthRepositoryPersonalAccess;
+use App\Repositories\Auth\PasswordResetRepository;
 use App\Repositories\Auth\TenantInvitationRepository;
 use App\Repositories\Auth\UserRepository;
 use App\Repositories\Authorization\RoleRepository;
@@ -26,6 +30,10 @@ class AuthServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
+            AuthRepositoryPersonalAccessInterface::class,
+            AuthRepositoryPersonalAccess::class
+        );
+        $this->app->bind(
             AuthRepositoryInterface::class,
             AuthRepository::class
         );
@@ -41,6 +49,9 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->app->bind(TenantInvitationRepositoryInterface::class,TenantInvitationRepository::class);
         $this->app->bind(TenantInvitationServiceInterface::class,TenantInvitationService::class);
+
+        $this->app->bind(PasswordResetRepositoryInterface::class,PasswordResetRepository::class);
+//        $this->app->bind();
     }
 
     /**

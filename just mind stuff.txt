@@ -1,0 +1,10 @@
+user
+    sign up (owner) -- DONE -- MINOR FIXES
+    login -- DONE -- MINOR FIXES
+    logout -- DONE --
+    refresh token -- PARTIALLY DONE --
+    reset password -- PARTIALLY DONE --
+    update profile -- PARTIALLY DONE --
+    view profile -- PARTIALLY DONE --
+
+
